@@ -27,7 +27,7 @@ def test_different_values():
     assert relation(a, b) == "different"
 
 
-def none_compare():
+def test_none_compare():
     a = None
     b = None
 
