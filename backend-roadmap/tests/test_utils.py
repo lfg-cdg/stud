@@ -30,7 +30,7 @@ def test_is_value_blank(value, result):
 
 
 def test_validate_title_valid():
-    assert normalize_title("jopa") == "jopa"
+    assert validate_title("jopa") == "jopa"
 
 
 def test_validate_title_blank():
