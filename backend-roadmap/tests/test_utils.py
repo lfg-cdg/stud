@@ -1,17 +1,45 @@
-from app.utils import is_blank, normalize_title
+import pytest
+
+from app.exceptions import ValidationError
+from app.utils import is_blank, normalize_title, validate_title
 
 
-def test_normalize_title_strip_spaces():
-    res = normalize_title("   jope  ")
+@pytest.mark.parametrize(
+    "title, result",
+    [
+        ("  jopa  ", "jopa"),
+        ("  ", ""),
+        (" hello my name ", "hello my name"),
+    ],
+)
+def test_normalize_title_strip_spaces(title, result):
+    assert normalize_title(title) == result
 
-    assert res == "jope"
+
+@pytest.mark.parametrize(
+    "value, result",
+    [
+        ("jopa", False),
+        ("   ", True),
+        ("", True),
+        ("  jopa  ", False),
+    ],
+)
+def test_is_value_blank(value, result):
+    assert is_blank(value) == result
 
 
-def test_is_value_blank():
-    res1 = is_blank("jopa")
-    res2 = is_blank("   ")
-    res3 = is_blank("")
+def test_validate_title_valid():
+    assert normalize_title("jopa") == "jopa"
 
-    assert not res1
-    assert res2
-    assert res3
+
+def test_validate_title_blank():
+    with pytest.raises(ValidationError):
+        validate_title("   ")
+
+
+def test_validate_title_too_long():
+    with pytest.raises(ValidationError):
+        validate_title(
+            "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"
+        )
