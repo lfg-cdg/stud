@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 
 
-@dataclass
-class AppConfig(slots=True):
-    app_name: str
-    debug: bool
-    version: str
-
+@dataclass(slots=True)
+class AppConfig:
+    app_name: str = "notes-api"
+    debug: bool = True
+    version: str = "0.1.0"
