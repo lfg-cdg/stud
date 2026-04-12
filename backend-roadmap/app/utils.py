@@ -25,7 +25,7 @@ def validate_content(content: str) -> str:
 
     if not result:
         raise ValidationError("Content can not be blank")
-    if len(result) >= 1000:
+    if len(result) > 1000:
         raise ValidationError("Too long content")
 
     return result
