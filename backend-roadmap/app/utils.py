@@ -18,3 +18,14 @@ def validate_title(title: str) -> str:
         raise ValidationError("Title can not be more than 100 symbols")
 
     return cleaned
+
+
+def validate_content(content: str) -> str:
+    result = content.strip()
+
+    if not result:
+        raise ValidationError("Content can not be blank")
+    if len(result) >= 1000:
+        raise ValidationError("Too long content")
+
+    return result

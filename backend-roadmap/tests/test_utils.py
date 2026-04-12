@@ -1,7 +1,7 @@
 import pytest
 
 from app.exceptions import ValidationError
-from app.utils import is_blank, normalize_title, validate_title
+from app.utils import is_blank, normalize_title, validate_content, validate_title
 
 
 @pytest.mark.parametrize(
@@ -43,3 +43,19 @@ def test_validate_title_too_long():
         validate_title(
             "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"
         )
+
+
+@pytest.mark.parametrize(
+    "content, result",
+    [
+        ("   hello   ", "hello"),
+        (" hello world", "hello world"),
+    ],
+)
+def test_validate_content_strip(content, result):
+    assert validate_content(content) == result
+
+
+def test_validate_content_blank():
+    with pytest.raises(ValidationError):
+        validate_content("   ")
