@@ -1,8 +1,7 @@
-from dataclasses import dataclass, field
+from pydantic import BaseModel
 
 
-@dataclass(slots=True)
-class NoteCreate:
+class NoteCreate(BaseModel):
     title: str
     content: str
-    tags: list[str] = field(default_factory=list)
+    tags: list[str] = []
