@@ -59,3 +59,7 @@ def test_validate_content_strip(content, result):
 def test_validate_content_blank():
     with pytest.raises(ValidationError):
         validate_content("   ")
+
+def test_validate_content_too_long():
+    with pytest.raises(ValidationError):
+        validate_content("a" * 1001)
