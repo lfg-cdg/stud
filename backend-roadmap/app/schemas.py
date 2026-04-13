@@ -10,7 +10,7 @@ class NoteCreate(BaseModel):
 class NoteUpdate(BaseModel):
     title: str
     content: str
-    tags: str
+    tags: list[str] = []
 
 
 class TagCreate(BaseModel):
@@ -21,4 +21,3 @@ class UserCreate(BaseModel):
     username: str
     email: str
     age: int
-
