@@ -20,7 +20,7 @@ def create_note(note: NoteCreate):
     created_note = {"id": note_id_counter, **note.model_dump()}
     notes.append(created_note)
 
-    return {"message": "Note created successfully!", "note": notes}
+    return {"message": "Note created successfully!", "note": created_note}
 
 
 @app.get("/notes")
@@ -52,7 +52,7 @@ def update_note(note_id: int, new_note: NoteUpdate):
     for note in notes:
         if note["id"] == note_id:
             note.update(new_note.model_dump())
-            return new_note
+            return note
 
     raise HTTPException(status_code=404, detail="Note not found")
 
