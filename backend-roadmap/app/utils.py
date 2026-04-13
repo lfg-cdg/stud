@@ -29,3 +29,14 @@ def validate_content(content: str) -> str:
         raise ValidationError("Too long content")
 
     return result
+
+
+def validate_email(email: str) -> str:
+    result = email.strip()
+
+    if not result:
+        raise ValidationError("Email can not be blank")
+    if "@" not in result:
+        raise ValidationError("Invalid email")
+
+    return result

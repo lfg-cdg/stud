@@ -9,3 +9,9 @@ class NoteCreate(BaseModel):
 
 class TagCreate(BaseModel):
     name: str
+
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    age: int

@@ -1,7 +1,7 @@
 import pytest
 
 from app.exceptions import ValidationError
-from app.utils import is_blank, normalize_title, validate_content, validate_title
+from app.utils import is_blank, normalize_title, validate_content, validate_email, validate_title
 
 
 @pytest.mark.parametrize(
@@ -64,3 +64,18 @@ def test_validate_content_blank():
 def test_validate_content_too_long():
     with pytest.raises(ValidationError):
         validate_content("a" * 1001)
+
+
+def test_validate_email():
+    assert validate_email(" m1sharu@yandex.ru ") == "m1sharu@yandex.ru"
+    assert validate_email("m1sharu@yandex.ru") == "m1sharu@yandex.ru"
+
+
+def test_validate_email_blank():
+    with pytest.raises(ValidationError):
+        validate_email("   ")
+
+
+def test_validate_email_invalid():
+    with pytest.raises(ValidationError):
+        validate_email(" jopasiski.ru")
