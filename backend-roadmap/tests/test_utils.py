@@ -1,7 +1,14 @@
 import pytest
 
 from app.exceptions import ValidationError
-from app.utils import is_blank, normalize_title, validate_content, validate_email, validate_title
+from app.utils import (
+    is_blank,
+    normalize_title,
+    validate_content,
+    validate_email,
+    validate_title,
+    validate_url,
+)
 
 
 @pytest.mark.parametrize(
@@ -79,3 +86,19 @@ def test_validate_email_blank():
 def test_validate_email_invalid():
     with pytest.raises(ValidationError):
         validate_email(" jopasiski.ru")
+
+
+@pytest.mark.parametrize(
+    "url, result",
+    [
+        ("https://chatgpt.com/", "https://chatgpt.com/"),
+        ("   https://chatgpt.com/   ", "https://chatgpt.com/"),
+    ],
+)
+def test_validate_url(url, result):
+    assert validate_url(url) == result
+
+
+def test_validate_url_invalid_protocol():
+    with pytest.raises(ValidationError):
+        validate_url("  http://chatgpt.com/")

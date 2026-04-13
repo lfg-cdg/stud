@@ -21,3 +21,15 @@ class UserCreate(BaseModel):
     username: str
     email: str
     age: int
+
+
+class BookmarkCreate(BaseModel):
+    url: str
+    title: str
+    is_favourite: bool = False
+
+
+class BookmarkUpdate(BaseModel):
+    url: str
+    title: str
+    is_favourite: bool = False

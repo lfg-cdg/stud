@@ -1,10 +1,19 @@
 from fastapi import FastAPI, HTTPException
 
-from app.schemas import NoteCreate, NoteUpdate, TagCreate, UserCreate
+from app.schemas import (
+    BookmarkCreate,
+    BookmarkUpdate,
+    NoteCreate,
+    NoteUpdate,
+    TagCreate,
+    UserCreate,
+)
 
 app = FastAPI(title="Notes API", version="0.1.0")
 notes = []
 note_id_counter = 0
+bookmarks = []
+bookmark_id_counter = 0
 
 
 @app.get("/")
@@ -80,3 +89,47 @@ def check_users():
 @app.get("/users/{user_id}")
 def check_user_by_id(user_id: int):
     return {"user_id": user_id, "username": "Jopa228"}
+
+
+@app.post("/bookmarks", status_code=201)
+def create_bookmark(bookmark: BookmarkCreate):
+    global bookmark_id_counter
+    bookmark_id_counter += 1
+
+    created_bookmark = {"id": bookmark_id_counter, **bookmark.model_dump()}
+    bookmarks.append(created_bookmark)
+    return {"message": "Bookmark created", "bookmark": bookmark}
+
+
+@app.get("/bookmarks")
+def check_bookmarks():
+    return bookmarks
+
+
+@app.get("/bookmarks/{bookmark_id}")
+def check_bookmark_by_id(bookmark_id: int):
+    for bookmark in bookmarks:
+        if bookmark["id"] == bookmark_id:
+            return bookmark
+
+    raise HTTPException(status_code=404, detail="Bookmark not found")
+
+
+@app.put("/bookmarks/{bookmark_id}")
+def update_bookmark(bookmark_id: int, updated_bookmark: BookmarkUpdate):
+    for bookmark in bookmarks:
+        if bookmark["id"] == bookmark_id:
+            bookmark.update(updated_bookmark.model_dump())
+            return bookmark
+
+    raise HTTPException(status_code=404, detail="Bookmark not found")
+
+
+@app.delete("/bookmarks/{bookmark_id}")
+def delete_bookmark(bookmark_id: int):
+    for bookmark in bookmarks:
+        if bookmark["id"] == bookmark_id:
+            bookmarks.remove(bookmark)
+            return {"message": "Bookmark deleted"}
+
+    raise HTTPException(status_code=404, detail="Bookmark not found")
