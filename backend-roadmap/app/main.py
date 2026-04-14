@@ -183,12 +183,12 @@ def update_projects(project_id: int, new_project: ProjectUpdate):
     for project in projects:
         if project["id"] == project_id:
             project.update(new_project.model_dump())
-            return new_project
+            return project
 
     raise HTTPException(status_code=404, detail="Project not found")
 
 
-@app.delete("/projects/{projects_id}")
+@app.delete("/projects/{project_id}")
 def delete_project(project_id: int):
     for project in projects:
         if project["id"] == project_id:
