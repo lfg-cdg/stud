@@ -45,7 +45,9 @@ def validate_email(email: str) -> str:
 def validate_url(url: str) -> str:
     result = url.strip()
 
-    if result.startswith("http:"):
-        raise ValidationError("Url can not be HTTP")
+    if not result:
+        raise ValidationError("Url can not be blank")
+    if not result.startswith("http"):
+        raise ValidationError("Invalid url")
 
     return result

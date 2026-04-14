@@ -101,4 +101,4 @@ def test_validate_url(url, result):
 
 def test_validate_url_invalid_protocol():
     with pytest.raises(ValidationError):
-        validate_url("  http://chatgpt.com/")
+        validate_url("jopa")

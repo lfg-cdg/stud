@@ -5,15 +5,22 @@ from app.schemas import (
     BookmarkUpdate,
     NoteCreate,
     NoteUpdate,
+    ProjectCreate,
+    ProjectUpdate,
     TagCreate,
     UserCreate,
 )
 
 app = FastAPI(title="Notes API", version="0.1.0")
+
 notes = []
 note_id_counter = 0
+
 bookmarks = []
 bookmark_id_counter = 0
+
+projects = []
+project_id_counter = 0
 
 
 @app.get("/")
@@ -98,12 +105,23 @@ def create_bookmark(bookmark: BookmarkCreate):
 
     created_bookmark = {"id": bookmark_id_counter, **bookmark.model_dump()}
     bookmarks.append(created_bookmark)
-    return {"message": "Bookmark created", "bookmark": bookmark}
+    return {"message": "Bookmark created", "bookmark": created_bookmark}
 
 
 @app.get("/bookmarks")
 def check_bookmarks():
     return bookmarks
+
+
+@app.get("/bookmarks/favourite")
+def check_favourite_bookmarks():
+    favourite = []
+
+    for bookmark in bookmarks:
+        if bookmark["is_favourite"]:
+            favourite.append(bookmark)
+
+    return favourite
 
 
 @app.get("/bookmarks/{bookmark_id}")
@@ -133,3 +151,48 @@ def delete_bookmark(bookmark_id: int):
             return {"message": "Bookmark deleted"}
 
     raise HTTPException(status_code=404, detail="Bookmark not found")
+
+
+@app.post("/projects", status_code=201)
+def create_project(project: ProjectCreate):
+    global project_id_counter
+    project_id_counter += 1
+
+    created_project = {"id": project_id_counter, **project.model_dump()}
+    projects.append(created_project)
+
+    return created_project
+
+
+@app.get("/projects")
+def check_projects():
+    return projects
+
+
+@app.get("/projects/{project_id}")
+def check_project_by_id(project_id: int):
+    for project in projects:
+        if project["id"] == project_id:
+            return project
+
+    raise HTTPException(status_code=404, detail="Project not found")
+
+
+@app.put("/projects/{project_id}")
+def update_projects(project_id: int, new_project: ProjectUpdate):
+    for project in projects:
+        if project["id"] == project_id:
+            project.update(new_project.model_dump())
+            return new_project
+
+    raise HTTPException(status_code=404, detail="Project not found")
+
+
+@app.delete("/projects/{projects_id}")
+def delete_project(project_id: int):
+    for project in projects:
+        if project["id"] == project_id:
+            projects.remove(project)
+            return {"message": "Project deleted!"}
+
+    raise HTTPException(status_code=404, detail="Project not found")

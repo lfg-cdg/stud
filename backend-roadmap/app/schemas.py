@@ -33,3 +33,15 @@ class BookmarkUpdate(BaseModel):
     url: str
     title: str
     is_favourite: bool = False
+
+
+class ProjectCreate(BaseModel):
+    name: str
+    description: str
+    is_active: bool = True
+
+
+class ProjectUpdate(BaseModel):
+    name: str
+    description: str
+    is_active: bool = True
