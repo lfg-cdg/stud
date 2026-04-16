@@ -13,16 +13,6 @@ class NoteUpdate(BaseModel):
     tags: list[str] = []
 
 
-class TagCreate(BaseModel):
-    name: str
-
-
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    age: int
-
-
 class BookmarkCreate(BaseModel):
     url: str
     title: str
