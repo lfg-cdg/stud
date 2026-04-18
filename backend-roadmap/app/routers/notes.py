@@ -32,7 +32,7 @@ def check_completed_notes():
             completed_notes.append(note)
 
     if not completed_notes:
-        return HTTPException(status_code=404, detail="Not found done tasks")
+        raise HTTPException(status_code=404, detail="Not found done tasks")
 
     return completed_notes
 
