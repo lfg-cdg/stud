@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.models import Task, User
+
+from app import models  # noqa: F401
 from app.database import Base, engine
 from app.routers import bookmarks, notes, projects
 

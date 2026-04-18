@@ -10,8 +10,9 @@ tasks = [
 ]
 
 db.add_all(tasks)
+db.commit()
 for task in tasks:
-    db.commit()
+    db.refresh(task)
     print(task.id, task.title)
 
 db.close()
