@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.models import Note, Book, Jopa, User
+from app.models import Task, User
 from app.database import Base, engine
 from app.routers import bookmarks, notes, projects
 
