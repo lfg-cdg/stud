@@ -11,4 +11,5 @@ db.commit()
 db.refresh(task1)
 
 print(task1.id, task1.title)
+db.close()
 
