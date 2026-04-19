@@ -1,5 +1,6 @@
+from app.models.bookmark import Bookmark
 from app.models.note import Note
 from app.models.task import Task
 from app.models.user import User
 
-__all__ = ["Note", "Task", "User"]
+__all__ = ["Bookmark", "Note", "Task", "User"]

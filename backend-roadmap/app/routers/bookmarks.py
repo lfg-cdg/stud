@@ -1,63 +1,68 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
-from app.schemas import BookmarkCreate, BookmarkUpdate
+from app.database import get_db
+from app.models import Bookmark
+from app.schemas import BookmarkCreate, BookmarkResponse, BookmarkUpdate
 
 router = APIRouter(prefix="/bookmarks", tags=["Bookmarks"])
 
-bookmarks = []
-bookmark_id_counter = 0
+
+def get_bookmark_or_404(bookmark_id: int, db: Session = Depends(get_db)):
+    bookmark = db.query(Bookmark).filter(Bookmark.id == bookmark_id).first()
+
+    if not bookmark:
+        raise HTTPException(status_code=404, detail="Bookmark not found!")
+
+    return bookmark
 
 
-@router.post("/", status_code=201)
-def create_bookmark(bookmark: BookmarkCreate):
-    global bookmark_id_counter
-    bookmark_id_counter += 1
+@router.post("/", status_code=201, response_model=BookmarkResponse)
+def create_bookmark(bookmark: BookmarkCreate, db: Session = Depends(get_db)):
+    new_bookmark = Bookmark(**bookmark.model_dump())
 
-    created_bookmark = {"id": bookmark_id_counter, **bookmark.model_dump()}
-    bookmarks.append(created_bookmark)
-    return {"message": "Bookmark created", "bookmark": created_bookmark}
+    db.add(new_bookmark)
+    db.commit()
+    db.refresh(new_bookmark)
 
-
-@router.get("/")
-def check_bookmarks():
-    return bookmarks
+    return new_bookmark
 
 
-@router.get("/favourite")
-def check_favourite_bookmarks():
-    favourite = []
-
-    for bookmark in bookmarks:
-        if bookmark["is_favourite"]:
-            favourite.append(bookmark)
-
-    return favourite
+@router.get("/", response_model=list[BookmarkResponse])
+def get_bookmarks(db: Session = Depends(get_db)):
+    return db.query(Bookmark).all()
 
 
-@router.get("/{bookmark_id}")
-def check_bookmark_by_id(bookmark_id: int):
-    for bookmark in bookmarks:
-        if bookmark["id"] == bookmark_id:
-            return bookmark
+@router.get("/favourite", response_model=list[BookmarkResponse])
+def get_favourite_bookmarks(db: Session = Depends(get_db)):
+    favourite_bookmarks = db.query(Bookmark).filter(Bookmark.is_favourite.is_(True)).all()
 
-    raise HTTPException(status_code=404, detail="Bookmark not found")
+    return favourite_bookmarks
 
 
-@router.put("/{bookmark_id}")
-def update_bookmark(bookmark_id: int, updated_bookmark: BookmarkUpdate):
-    for bookmark in bookmarks:
-        if bookmark["id"] == bookmark_id:
-            bookmark.update(updated_bookmark.model_dump())
-            return bookmark
+@router.get("/{bookmark_id}", response_model=BookmarkResponse)
+def get_bookmark_by_id(bookmark_id: int, db: Session = Depends(get_db)):
+    return get_bookmark_or_404(bookmark_id, db)
 
-    raise HTTPException(status_code=404, detail="Bookmark not found")
+
+@router.put("/{bookmark_id}", response_model=BookmarkResponse)
+def update_bookmark(bookmark_id: int, new_bookmark: BookmarkUpdate, db: Session = Depends(get_db)):
+    bookmark = get_bookmark_or_404(bookmark_id, db)
+
+    for key, value in new_bookmark.model_dump().items():
+        setattr(bookmark, key, value)
+
+    db.commit()
+    db.refresh(bookmark)
+
+    return bookmark
 
 
 @router.delete("/{bookmark_id}")
-def delete_bookmark(bookmark_id: int):
-    for bookmark in bookmarks:
-        if bookmark["id"] == bookmark_id:
-            bookmarks.remove(bookmark)
-            return {"message": "Bookmark deleted"}
+def delete_bookmark(bookmark_id: int, db: Session = Depends(get_db)):
+    bookmark = get_bookmark_or_404(bookmark_id, db)
 
-    raise HTTPException(status_code=404, detail="Bookmark not found")
+    db.delete(bookmark)
+    db.commit()
+
+    return {"message": "Bookmark deleted!"}

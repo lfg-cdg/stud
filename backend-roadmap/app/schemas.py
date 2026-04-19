@@ -13,16 +13,34 @@ class NoteUpdate(BaseModel):
     is_complete: bool = False
 
 
-class BookmarkCreate(BaseModel):
-    url: str
+class NoteResponse(BaseModel):
+    id: int
     title: str
-    is_favourite: bool = False
+    content: str
+    is_complete: bool
+
+    model_config = {"from_attributes": True}
+
+
+class BookmarkCreate(BaseModel):
+    title: str
+    url: str
+    is_favourite: bool = True
 
 
 class BookmarkUpdate(BaseModel):
-    url: str
     title: str
-    is_favourite: bool = False
+    url: str
+    is_favourite: bool = True
+
+
+class BookmarkResponse(BaseModel):
+    id: int
+    title: str
+    url: str
+    is_favourite: bool = True
+
+    model_config = {"from_attributes": True}
 
 
 class ProjectCreate(BaseModel):
