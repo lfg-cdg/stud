@@ -25,34 +25,42 @@ class NoteResponse(BaseModel):
 class BookmarkCreate(BaseModel):
     title: str
     url: str
-    is_favourite: bool = True
+    is_favourite: bool = False
 
 
 class BookmarkUpdate(BaseModel):
     title: str
     url: str
-    is_favourite: bool = True
+    is_favourite: bool = False
 
 
 class BookmarkResponse(BaseModel):
     id: int
     title: str
     url: str
-    is_favourite: bool = True
+    is_favourite: bool
 
     model_config = {"from_attributes": True}
 
 
 class ProjectCreate(BaseModel):
-    name: str
+    title: str
     description: str
-    is_active: bool = True
+    is_done: bool = False
 
 
 class ProjectUpdate(BaseModel):
-    name: str
+    title: str
     description: str
-    is_active: bool = True
+    is_done: bool = False
+
+
+class ProjectResponse(BaseModel):
+    title: str
+    description: str
+    is_done: bool
+
+    model_config = {"from_attributes": True}
 
 
 class CreateTask(BaseModel):

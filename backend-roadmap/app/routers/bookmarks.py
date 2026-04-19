@@ -58,7 +58,7 @@ def update_bookmark(bookmark_id: int, new_bookmark: BookmarkUpdate, db: Session 
     return bookmark
 
 
-@router.delete("/{bookmark_id}")
+@router.delete("/{bookmark_id}", status_code=200)
 def delete_bookmark(bookmark_id: int, db: Session = Depends(get_db)):
     bookmark = get_bookmark_or_404(bookmark_id, db)
 
