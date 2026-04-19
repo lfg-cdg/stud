@@ -6,3 +6,11 @@ DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/backend_db"
 engine = create_engine(DATABASE_URL, client_encoding="utf8")
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

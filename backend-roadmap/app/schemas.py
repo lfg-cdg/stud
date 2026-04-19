@@ -4,14 +4,12 @@ from pydantic import BaseModel
 class NoteCreate(BaseModel):
     title: str
     content: str
-    tags: list[str] = []
     is_complete: bool = False
 
 
 class NoteUpdate(BaseModel):
     title: str
     content: str
-    tags: list[str] = []
     is_complete: bool = False
 
 
