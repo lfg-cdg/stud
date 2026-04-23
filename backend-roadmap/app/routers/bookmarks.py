@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Bookmark
-from app.schemas import BookmarkCreate, BookmarkResponse, BookmarkUpdate
+from app.schemas import BookmarkCreate, BookmarkPatch, BookmarkResponse, BookmarkUpdate
 
 router = APIRouter(prefix="/bookmarks", tags=["Bookmarks"])
 
 
-def get_bookmark_or_404(bookmark_id: int, db: Session = Depends(get_db)):
+def get_bookmark_or_404(bookmark_id: int, db: Session = Depends(get_db)) -> Bookmark:
     bookmark = db.query(Bookmark).filter(Bookmark.id == bookmark_id).first()
 
     if not bookmark:
@@ -66,3 +66,17 @@ def delete_bookmark(bookmark_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Bookmark deleted!"}
+
+
+@router.patch("/{bookmark_id}", response_model=BookmarkResponse)
+def patch_bookmark(bookmark_id: int, patch: BookmarkPatch, db: Session = Depends(get_db)):
+    bookmark = get_bookmark_or_404(bookmark_id, db)
+
+    new_bookmark = patch.model_dump(exclude_unset=True)
+    for key, value in new_bookmark.items():
+        setattr(bookmark, key, value)
+
+    db.commit()
+    db.refresh(bookmark)
+
+    return bookmark

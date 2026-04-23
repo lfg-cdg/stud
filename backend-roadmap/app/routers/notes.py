@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Note
-from app.schemas import NoteCreate, NoteResponse, NoteUpdate
+from app.schemas import NoteCreate, NotePatch, NoteResponse, NoteUpdate
 
 router = APIRouter(prefix="/notes", tags=["Notes"])
 
@@ -71,6 +71,20 @@ def update_note_status(note_id: int, db: Session = Depends(get_db)):
     note = get_note_or_404(note_id, db)
 
     note.is_complete = True
+    db.commit()
+    db.refresh(note)
+
+    return note
+
+
+@router.patch("/{note_id}", response_model=NoteResponse)
+def patch_note(note_id: int, patch: NotePatch, db: Session = Depends(get_db)):
+    note = get_note_or_404(note_id, db)
+
+    new_note = patch.model_dump(exclude_unset=True)
+    for key, value in new_note.items():
+        setattr(note, key, value)
+
     db.commit()
     db.refresh(note)
 

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Project
-from app.schemas import ProjectCreate, ProjectResponse, ProjectUpdate
+from app.schemas import ProjectCreate, ProjectPatch, ProjectResponse, ProjectUpdate
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
@@ -60,6 +60,20 @@ def update_projects(project_id: int, new_project: ProjectUpdate, db: Session = D
     project = get_project_or_404(project_id, db)
 
     for key, value in new_project.model_dump().items():
+        setattr(project, key, value)
+
+    db.commit()
+    db.refresh(project)
+
+    return project
+
+
+@router.patch("/{project_id}", response_model=ProjectResponse)
+def patch_project(project_id: int, patch: ProjectPatch, db: Session = Depends(get_db)):
+    project = get_project_or_404(project_id, db)
+
+    new_project = patch.model_dump(exclude_unset=True)
+    for key, value in new_project.items():
         setattr(project, key, value)
 
     db.commit()
