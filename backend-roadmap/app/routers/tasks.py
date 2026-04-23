@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Task
-from app.schemas import CreateTask, PatchTask, ResponseTask, UpdateTask
+from app.schemas import TaskCreate, TaskPatch, TaskResponse, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -17,8 +17,8 @@ def get_task_or_404(task_id: int, db: Session = Depends(get_db)) -> Task:
     return task
 
 
-@router.post("/", response_model=ResponseTask, status_code=201)
-def create_task(task: CreateTask, db: Session = Depends(get_db)):
+@router.post("/", response_model=TaskResponse, status_code=201)
+def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     new_task = Task(**task.model_dump())
 
     db.add(new_task)
@@ -28,29 +28,29 @@ def create_task(task: CreateTask, db: Session = Depends(get_db)):
     return new_task
 
 
-@router.get("/", response_model=list[ResponseTask])
+@router.get("/", response_model=list[TaskResponse])
 def get_all_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).all()
 
     return tasks
 
 
-@router.get("/active", response_model=list[ResponseTask])
+@router.get("/active", response_model=list[TaskResponse])
 def get_active_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).filter(Task.is_done.is_(False)).all()
 
     return tasks
 
 
-@router.get("/{task_id}", response_model=ResponseTask)
+@router.get("/{task_id}", response_model=TaskResponse)
 def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
     return task
 
 
-@router.put("/{task_id}", response_model=ResponseTask)
-def update_task(task_id: int, new_task: UpdateTask, db: Session = Depends(get_db)):
+@router.put("/{task_id}", response_model=TaskResponse)
+def update_task(task_id: int, new_task: TaskUpdate, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
     for key, value in new_task.model_dump().items():
@@ -62,8 +62,8 @@ def update_task(task_id: int, new_task: UpdateTask, db: Session = Depends(get_db
     return task
 
 
-@router.patch("/{task_id}", response_model=ResponseTask)
-def patch_task(task_id: int, patch: PatchTask, db: Session = Depends(get_db)):
+@router.patch("/{task_id}", response_model=TaskResponse)
+def patch_task(task_id: int, patch: TaskPatch, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
     new_task = patch.model_dump(exclude_unset=True)

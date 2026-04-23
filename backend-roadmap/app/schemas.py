@@ -82,28 +82,28 @@ class ProjectPatch(BaseModel):
     is_done: bool | None = None
 
 
-class CreateTask(BaseModel):
+class TaskCreate(BaseModel):
     title: str
     description: str
     priority: str
     is_done: bool = False
 
 
-class UpdateTask(BaseModel):
+class TaskUpdate(BaseModel):
     title: str
     description: str
     priority: str
     is_done: bool = False
 
 
-class PatchTask(BaseModel):
+class TaskPatch(BaseModel):
     title: str | None = None
     description: str | None = None
     priority: str | None = None
     is_done: bool | None = None
 
 
-class ResponseTask(BaseModel):
+class TaskResponse(BaseModel):
     id: int
     title: str
     description: str
