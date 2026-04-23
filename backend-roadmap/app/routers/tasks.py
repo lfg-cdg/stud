@@ -37,7 +37,7 @@ def get_all_tasks(db: Session = Depends(get_db)):
 
 @router.get("/active", response_model=list[ResponseTask])
 def get_active_tasks(db: Session = Depends(get_db)):
-    tasks = db.query(Task).filter(not Task.is_done).all()
+    tasks = db.query(Task).filter(Task.is_done.is_(False)).all()
 
     return tasks
 
