@@ -8,7 +8,7 @@ from app.schemas import CreateTask, PatchTask, ResponseTask, UpdateTask
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
-def get_task_or_404(task_id: int, db: Session = Depends(get_db)):
+def get_task_or_404(task_id: int, db: Session = Depends(get_db)) -> Task:
     task = db.query(Task).filter(Task.id == task_id).first()
 
     if not task:
@@ -17,7 +17,7 @@ def get_task_or_404(task_id: int, db: Session = Depends(get_db)):
     return task
 
 
-@router.post("/", response_model=ResponseTask)
+@router.post("/", response_model=ResponseTask, status_code=201)
 def create_task(task: CreateTask, db: Session = Depends(get_db)):
     new_task = Task(**task.model_dump())
 
@@ -49,7 +49,7 @@ def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
     return task
 
 
-@router.put("/tasks/{task_id}", response_model=ResponseTask)
+@router.put("/{task_id}", response_model=ResponseTask)
 def update_task(task_id: int, new_task: UpdateTask, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
@@ -62,7 +62,7 @@ def update_task(task_id: int, new_task: UpdateTask, db: Session = Depends(get_db
     return task
 
 
-@router.patch("/tasks/{task_id}", response_model=ResponseTask)
+@router.patch("/{task_id}", response_model=ResponseTask)
 def patch_task(task_id: int, patch: PatchTask, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
@@ -76,7 +76,7 @@ def patch_task(task_id: int, patch: PatchTask, db: Session = Depends(get_db)):
     return task
 
 
-@router.delete("/tasks/{task_id}")
+@router.delete("/{task_id}", status_code=200)
 def delete_task(task_id: int, db: Session = Depends(get_db)):
     task = get_task_or_404(task_id, db)
 
