@@ -15,8 +15,10 @@ name = "notes-api"
 version = "0.1.0"
 requires_python = ">=3.12"
 dependencies = [
+    "alembic>=1.18.4",
     "fastapi>=0.135.3",
     "psycopg2-binary>=2.9.11",
+    "pydantic-settings>=2.14.0",
     "sqlalchemy>=2.0.49",
     "uvicorn>=0.44.0",
 ]

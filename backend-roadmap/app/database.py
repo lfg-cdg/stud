@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from app.config import settings
 
-DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/backend_db"
 
-engine = create_engine(DATABASE_URL, client_encoding="utf8")
+engine = create_engine(settings.database_url, client_encoding="utf8")
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 

@@ -1,8 +1,10 @@
-from dataclasses import dataclass
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-@dataclass(slots=True)
-class AppConfig:
-    app_name: str = "notes-api"
-    debug: bool = True
-    version: str = "0.1.0"
+class Settings(BaseSettings):
+    database_url: str
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+
+settings = Settings()
