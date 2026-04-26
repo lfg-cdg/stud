@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
 from app import models  # noqa: F401
-from app.database import Base, engine
 from app.routers import bookmarks, notes, projects, tasks
 
 app = FastAPI(title="Notes API", version="0.1.0")
